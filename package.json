@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "compile": "webpack",
-    "start": "node server.js",
+    "start": "nodemon node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -21,5 +21,19 @@
     "react-dom": "^16.2.0",
     "webpack": "^3.10.0",
     "webpack-dev-middleware": "^2.0.1"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "test/*",
+      "docs/*"
+    ],
+    "delay": "2500"
+  },
+  "devDependencies": {
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1",
+    "reload": "^2.2.2"
   }
 }
