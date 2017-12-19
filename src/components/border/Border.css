@@ -1,0 +1,11 @@
+.border-bottom,
+.border-top{
+  height: 65px;
+  background: #857979;
+  width: 100%;
+  position: absolute;
+}
+
+.border-bottom{
+  bottom: 0;
+}
