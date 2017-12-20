@@ -1,17 +1,18 @@
 import React from 'react';
-import './Border.css';
+import styled from 'styled-components';
 
-type Props = {
-  bottom?: boolean,
-};
+const BorderStyle = styled.div`
+  .border {
+    height: 60px;
+    background: #857979;
+    width: 100%;
+  }
+`;
 
-const Border = ({ ...props }: Props) => {
-  const className = props.bottom ? 'border-bottom' : 'border-top';
-  return <div className={className} />;
-};
-
-Border.defaultProps = {
-  bottom: false,
-};
+const Border = () => (
+  <BorderStyle>
+    <div className="border" />
+  </BorderStyle>
+);
 
 export default Border;

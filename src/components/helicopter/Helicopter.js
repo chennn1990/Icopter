@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import helicopterImg from '../../assets/helicopter.png';
 
@@ -7,29 +7,23 @@ const HelicopterStyle = styled.div`
     width: 150px;
     height: 115px;
     position: absolute;
-    left: 250px;
-    top: ${props => (props.start ? props.top : '40%')};
+    left: 225px;
+    top: ${props => `${props.top}px`};
   }
 `;
 
 type Props = {
-  start?: boolean,
+  top?: number,
 };
 
-type State = {};
+const Helicopter = ({ ...props }: Props) => (
+  <HelicopterStyle top={props.top}>
+    <img src={helicopterImg} alt="" />
+  </HelicopterStyle>
+);
 
-export default class Helicopter extends Component<Props, State> {
-  static defaultProps = {
-    start: false,
-  };
+Helicopter.defaultProps = {
+  top: 0,
+};
 
-  componentDidMount = () => {};
-
-  render() {
-    return (
-      <HelicopterStyle start={this.props.start}>
-        <img src={helicopterImg} alt="" />
-      </HelicopterStyle>
-    );
-  }
-}
+export default Helicopter;
