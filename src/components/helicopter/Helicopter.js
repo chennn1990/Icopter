@@ -1,13 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
 import helicopterImg from '../../assets/helicopter.png';
+import { HELICOPTER_LEFT } from '../../constants';
 
 const HelicopterStyle = styled.div`
   img {
     width: 150px;
-    height: 115px;
+    height: 80px;
     position: absolute;
-    left: 225px;
+    left: ${HELICOPTER_LEFT}px;
     top: ${props => `${props.top}px`};
   }
 `;
