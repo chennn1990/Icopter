@@ -1,30 +1,72 @@
-import React from 'react';
+import React, { Component } from 'react';
 import styled from 'styled-components';
+import { connect } from 'react-redux';
 import helicopterImg from '../../assets/helicopter.png';
-import { HELICOPTER_LEFT } from '../../constants';
+import {
+  HELICOPTER_LEFT,
+  HELICOPTER_TOP,
+  HELICOPTER_HEIGHT,
+  HELICOPTER_WIDTH,
+} from '../../constants';
+import { updateHelicopterTop } from '../../actions';
 
 const HelicopterStyle = styled.div`
   img {
-    width: 150px;
-    height: 80px;
+    width: ${HELICOPTER_WIDTH}px;
+    height: ${HELICOPTER_HEIGHT}px;
     position: absolute;
     left: ${HELICOPTER_LEFT}px;
-    top: ${props => `${props.top}px`};
+    top: ${HELICOPTER_TOP}px;
   }
 `;
 
 type Props = {
-  top?: number,
+  gameOver: boolean,
+  className?: string,
+  updateHelicopterTop?: () => void,
 };
 
-const Helicopter = ({ ...props }: Props) => (
-  <HelicopterStyle top={props.top}>
-    <img src={helicopterImg} alt="" />
-  </HelicopterStyle>
-);
+type State = {};
 
-Helicopter.defaultProps = {
-  top: 0,
-};
+class Helicopter extends Component<Props, State> {
+  static defaultProps = {
+    className: undefined,
+    updateHelicopterTop: undefined,
+  };
 
-export default Helicopter;
+  componentDidMount = () => {
+    this.intervalId = setInterval(() => {
+      this.props.updateHelicopterTop(this.helicopter.offsetTop);
+    }, 50);
+  };
+
+  componentWillReceiveProps = (nextProps: Props) =>
+    nextProps.gameOver && clearInterval(this.intervalId);
+
+  componentWillUnmount = () => {
+    clearInterval(this.intervalId);
+  };
+
+  inretvalId: number;
+
+  render() {
+    return (
+      <HelicopterStyle>
+        <img
+          src={helicopterImg}
+          alt=""
+          className={this.props.className}
+          ref={(h) => {
+            this.helicopter = h;
+          }}
+        />
+      </HelicopterStyle>
+    );
+  }
+}
+
+const mapStateToProps = ({ appReducer: { gameOver } }) => ({
+  gameOver,
+});
+
+export default connect(mapStateToProps, { updateHelicopterTop })(Helicopter);

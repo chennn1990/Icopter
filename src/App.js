@@ -1,135 +1,79 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Video from 'react-background-video-player';
-import styled from 'styled-components';
-import { SCREEN_HEIGHT, HELICOPTER_TOP } from './constants';
-import { Helicopter, Message, BombCreator } from './components';
-import { startGame, endGame } from './actions';
+import AppStyle from './styles';
+import { HELICOPTER_TOP } from './constants';
+import { Helicopter, Message, BombGenerator } from './components';
+import { startGame } from './actions';
 import backgroundVideo from './assets/Clouds_Fly_By.mp4';
-
-const AppStyle = styled.div`
-  display: table;
-  position: absolute;
-  height: 100%;
-  width: 100%;
-
-  .icopter-wrapper {
-    display: table-cell;
-    vertical-align: middle;
-  }
-
-  .icopter-container {
-    margin-left: auto;
-    margin-right: auto;
-    border-top: 30px solid #1b1818d6;
-    border-bottom: 30px solid #1b1818d6;
-    height: ${SCREEN_HEIGHT}px;
-    position: relative;
-  }
-`;
 
 type Props = {
   gameStarted: boolean,
   gameOver: boolean,
+  helicopterTop: number,
   startGame: () => void,
-  endGame: () => void,
 };
 
 type State = {
-  helicopterTop: number,
+  helicopterStatusClassName: string,
 };
 
 class App extends Component<Props, State> {
   static defaultProps = {
     gameStarted: false,
     startGame: undefined,
+    helicopterTop: HELICOPTER_TOP,
   };
 
   constructor(props: Props) {
     super(props);
     this.state = {
-      helicopterTop: HELICOPTER_TOP,
+      helicopterStatusClassName: '',
     };
   }
 
   componentDidMount = () => {
     window.onkeypress = (e) => {
-      if (e.keyCode === 13) this.props.startGame();
+      if (e.keyCode === 13) {
+        this.props.startGame();
+        this.setState({
+          helicopterStatusClassName: 'fail',
+        });
+        this.registerToClimbEvent();
+      }
     };
   };
 
-  componentWillReceiveProps = (nextProps: Props) => {
-    if (nextProps.gameStarted) {
-      this.helicopterFall();
-      this.registerToClimbEvent();
-    }
-  };
-
-  onEscape = (event: EventTarget, action: () => void) => {
+  onSpacePress = (event: EventTarget, action: () => void): void => {
     if (event.keyCode === 32) action();
   };
 
-  helicopterFall = () => {
-    this.helicopterIntervalId = setInterval(() => this.moveHelicopter(2, false), 3);
-  };
-
-  calculateHelicopterTop = (pixels: number, climb: boolean) => {
-    const { helicopterTop } = this.state;
-    let top = climb ? helicopterTop - pixels : helicopterTop + pixels;
-    if (top <= 0) {
-      this.stopHelicopter();
-      this.props.endGame();
-      top = 0;
-    }
-    if (top >= SCREEN_HEIGHT - HELICOPTER_TOP) {
-      this.stopHelicopter();
-      this.props.endGame();
-      top = SCREEN_HEIGHT - HELICOPTER_TOP;
-    }
-    return top;
-  };
-
-  moveHelicopter = (pixels: number, climb: boolean) => {
+  switchHelicopterClass = (className: string): void => {
     this.setState({
-      helicopterTop: this.calculateHelicopterTop(pixels, climb),
+      helicopterStatusClassName: className,
     });
   };
 
-  helicopterIntervalId: number;
-  bombIntervals: [];
-
-  registerToClimbEvent = () => {
-    let interval;
+  registerToClimbEvent = (): void => {
     window.onkeypress = (e) => {
-      this.onEscape(e, () => {
-        this.stopHelicopter();
-        this.moveHelicopter(30, true);
-        interval = setInterval(() => this.moveHelicopter(3, true), 1);
-      });
+      this.onSpacePress(e, () => this.switchHelicopterClass('jump'));
     };
     window.onkeyup = (e) => {
-      this.onEscape(e, () => {
-        clearInterval(interval);
-        this.helicopterFall();
-      });
+      this.onSpacePress(e, () => this.switchHelicopterClass('fail'));
     };
-  };
-
-  stopHelicopter = () => {
-    clearInterval(this.helicopterIntervalId);
   };
 
   render() {
     const { gameStarted, gameOver } = this.props;
     return (
-      <AppStyle>
+      <AppStyle top={this.props.helicopterTop}>
         <div className="icopter-wrapper">
           <div className="icopter-container">
             <Video containerWidth={0} containerHeight={0} src={backgroundVideo} />
             {!gameStarted && <Message msg="Press `Enter` to start play" />}
             {gameOver && <Message msg="Game over" />}
-            {gameStarted && !gameOver && <BombCreator />}
-            <Helicopter top={this.state.helicopterTop} />
+            {gameStarted && !gameOver && <BombGenerator />}
+            <Helicopter className={this.state.helicopterStatusClassName} />
           </div>
         </div>
       </AppStyle>
@@ -137,9 +81,10 @@ class App extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appReducer: { gameStarted, gameOver } }) => ({
+const mapStateToProps = ({ appReducer: { gameStarted, gameOver, helicopterTop } }) => ({
   gameStarted,
   gameOver,
+  helicopterTop,
 });
 
-export default connect(mapStateToProps, { startGame, endGame })(App);
+export default connect(mapStateToProps, { startGame })(App);
