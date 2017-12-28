@@ -7,7 +7,9 @@ import {
   HELICOPTER_TOP,
   HELICOPTER_HEIGHT,
   HELICOPTER_WIDTH,
+  CRASH_TIME,
 } from '../../constants';
+import { fall } from '../../styles';
 import { updateHelicopterTop } from '../../actions';
 
 const HelicopterStyle = styled.div`
@@ -16,7 +18,13 @@ const HelicopterStyle = styled.div`
     height: ${HELICOPTER_HEIGHT}px;
     position: absolute;
     left: ${HELICOPTER_LEFT}px;
-    top: ${HELICOPTER_TOP}px;
+    top: ${props => (!props.gameOver ? HELICOPTER_TOP : props.top)}px;
+    transition: ${CRASH_TIME}ms;
+  }
+
+  .crash {
+    transform: rotate(1980deg);
+    animation: ${props => fall(props.top)} ${CRASH_TIME}ms linear forwards;
   }
 `;
 
@@ -35,27 +43,38 @@ class Helicopter extends Component<Props, State> {
   };
 
   componentDidMount = () => {
-    this.intervalId = setInterval(() => {
-      this.props.updateHelicopterTop(this.helicopter.offsetTop);
-    }, 50);
+    this.intervalId = setInterval(this.updateTop, 50);
   };
 
-  componentWillReceiveProps = (nextProps: Props) =>
-    nextProps.gameOver && clearInterval(this.intervalId);
+  componentWillReceiveProps = (nextProps: Props) => {
+    if (!nextProps.gameOver) {
+      this.intervalId = setInterval(this.updateTop, 50);
+    }
+    if (nextProps.gameOver) {
+      clearInterval(this.intervalId);
+    }
+  };
 
   componentWillUnmount = () => {
     clearInterval(this.intervalId);
   };
 
+  updateTop = () => {
+    this.top = this.helicopter.offsetTop;
+    this.props.updateHelicopterTop(this.helicopter.offsetTop);
+  };
+
   inretvalId: number;
+  top: number;
 
   render() {
+    const { className, gameOver } = this.props;
     return (
-      <HelicopterStyle>
+      <HelicopterStyle top={this.top} gameOver={gameOver}>
         <img
           src={helicopterImg}
           alt=""
-          className={this.props.className}
+          className={gameOver ? 'crash' : className}
           ref={(h) => {
             this.helicopter = h;
           }}

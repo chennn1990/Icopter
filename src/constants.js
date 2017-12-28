@@ -2,7 +2,9 @@ export type BombObj = {
   x: number,
   y: number,
 };
-export const NUM_OF_BOMBS = 5;
+
+export const CRASH_TIME = 2500;
+export const NUM_OF_BOMBS = 10;
 export const SCREEN_HEIGHT = 600;
 export const HELICOPTER_TOP = 80;
 export const HELICOPTER_LEFT = 225;

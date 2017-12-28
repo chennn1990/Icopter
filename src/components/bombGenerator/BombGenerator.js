@@ -31,7 +31,7 @@ class BombGenerator extends Component<Props, State> {
     this.delayTime = INITIAL_DELAY_TIME;
     this.props.generateBombs();
     this.intervalCreatorId = setInterval(() => {
-      this.delayTime -= 100;
+      if (this.delayTime > 100) this.delayTime -= 100;
       this.props.generateBombs();
     }, this.delayTime * NUM_OF_BOMBS + 3000);
   };
