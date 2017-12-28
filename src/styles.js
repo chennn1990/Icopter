@@ -5,33 +5,31 @@ const FULL_SCREEN = SCREEN_HEIGHT - HELICOPTER_HEIGHT;
 const FULL_SCREEN_JUMP_TIME = 1;
 const FULL_SCREEN_FALL_TIME = 1.5;
 
-/* eslint-disable */
-const calculateTime = (screenSize: number, fullScreenTime: number) =>
+const calculateTime = (screenSize: number, fullScreenTime: number): number =>
   fullScreenTime * screenSize / FULL_SCREEN;
-/* eslint-enable */
 
-const fall = (top: number) => {
+export const fall = (top: number) => {
   const helicopterFall = keyframes`
-  0% {
-    top: ${top}px;
-  }
+    0% {
+      top: ${top}px;
+    }
 
-  100% {
-    top: ${FULL_SCREEN}px;
-  }
+    100% {
+      top: ${FULL_SCREEN}px;
+    }
   `;
   return helicopterFall;
 };
 
 const jump = (top: number) => {
   const helicopterJump = keyframes`
-  0% {
-    top: ${top}px;
-  }
+    0% {
+      top: ${top}px;
+    }
 
-  100% {
-    top: 0px;
-  }
+    100% {
+      top: 0px;
+    }
   `;
   return helicopterJump;
 };

@@ -14,13 +14,17 @@ import {
 const INITIAL_STATE = {
   gameStarted: false,
   gameOver: false,
-  helicopterTop: 0,
+  helicopterTop: HELICOPTER_TOP,
   bombs: [],
 };
 
 const updateHelicopter = (state: {}, top: number): {} => {
-  const gameOver = top >= SCREEN_HEIGHT - HELICOPTER_TOP || top <= 0;
-  return { ...state, gameOver, helicopterTop: top };
+  const gameOver = state.gameOver || top >= SCREEN_HEIGHT - HELICOPTER_TOP || top <= 0;
+  return {
+    ...state,
+    gameOver,
+    helicopterTop: top,
+  };
 };
 
 const generateBombs = (state: {}): {} => {
@@ -69,6 +73,8 @@ const isCollision = (bomb: BombObj, bombLeft: number, helicopterTop: number): bo
 
 export default (state = INITIAL_STATE, action: {}): {} => {
   switch (action.type) {
+    case actionTypes.INIT_GAME:
+      return INITIAL_STATE;
     case actionTypes.START_GAME:
       return { ...state, gameStarted: true };
     case actionTypes.UPDATE_HELICOPTER_TOP:
