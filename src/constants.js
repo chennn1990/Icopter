@@ -13,3 +13,4 @@ export const HELICOPTER_WIDTH = 120;
 export const BOMB_HEIGHT = 30;
 export const BOMB_WIDTH = 60;
 export const INITIAL_DELAY_TIME = 1000;
+export const UNITIALIZE_RECORD = -1;

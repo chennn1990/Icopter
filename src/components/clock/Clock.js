@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled, { keyframes } from 'styled-components';
 import { CRASH_TIME } from '../../constants';
+import { updateScore } from '../../actions';
 
 const stopTimer = keyframes`
     0% {
@@ -33,7 +34,7 @@ const ClockStyle = styled.div`
 
   .stop-timer {
     animation: ${stopTimer} ${CRASH_TIME}ms linear forwards;
-    font-size: 115px;
+    font-size: 80px;
   }
 
   .stop-timer > div {
@@ -44,6 +45,9 @@ const ClockStyle = styled.div`
 type Props = {
   gameStarted: boolean,
   gameOver: boolean,
+  updateScore: () => void,
+  showTime: (time: number) => string,
+  bestScore: number,
 };
 
 type State = {
@@ -51,11 +55,6 @@ type State = {
 };
 
 class Clock extends Component<Props, State> {
-  static defaultProps = {
-    gameStarted: false,
-    gameOver: false,
-  };
-
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -72,7 +71,10 @@ class Clock extends Component<Props, State> {
       }, 100);
     }
     if (nextProps.gameOver) {
+      const { counter } = this.state;
+      const { bestScore } = this.props;
       clearInterval(this.intervalId);
+      if (counter > bestScore) this.props.updateScore(counter);
     }
     if (!nextProps.gameStarted) {
       this.setState({
@@ -85,21 +87,14 @@ class Clock extends Component<Props, State> {
 
   intervalId: number;
 
-  presentMinutes = () => {
-    const minutes = Math.floor(this.state.counter / 10 / 60);
-    return minutes > 0 ? `${minutes}:` : '';
-  };
-
   render() {
     const { gameStarted, gameOver } = this.props;
-    const { counter } = this.state;
     return (
       <ClockStyle>
         <div className={`${gameStarted && gameOver ? 'stop-timer' : ''} clock`}>
           <div>
             {gameStarted && gameOver && 'Your time is: '}
-            {this.presentMinutes()}
-            {Math.floor((counter / 10) % 60)}.{counter % 10}
+            {this.props.showTime(this.state.counter)}
           </div>
         </div>
       </ClockStyle>
@@ -107,9 +102,10 @@ class Clock extends Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ appReducer: { gameStarted, gameOver } }) => ({
+const mapStateToProps = ({ appReducer: { gameStarted, gameOver, bestScore } }) => ({
   gameStarted,
   gameOver,
+  bestScore,
 });
 
-export default connect(mapStateToProps)(Clock);
+export default connect(mapStateToProps, { updateScore })(Clock);

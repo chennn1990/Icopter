@@ -9,12 +9,14 @@ import {
   BOMB_WIDTH,
   BombObj,
   HELICOPTER_HEIGHT,
+  UNITIALIZE_RECORD,
 } from '../constants';
 
 const INITIAL_STATE = {
   gameStarted: false,
   gameOver: false,
   helicopterTop: HELICOPTER_TOP,
+  bestScore: UNITIALIZE_RECORD,
   bombs: [],
 };
 
@@ -74,7 +76,7 @@ const isCollision = (bomb: BombObj, bombLeft: number, helicopterTop: number): bo
 export default (state = INITIAL_STATE, action: {}): {} => {
   switch (action.type) {
     case actionTypes.INIT_GAME:
-      return INITIAL_STATE;
+      return { ...state, bestScore: action.payload.bestScore };
     case actionTypes.START_GAME:
       return { ...state, gameStarted: true };
     case actionTypes.UPDATE_HELICOPTER_TOP:
