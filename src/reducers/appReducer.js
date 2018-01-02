@@ -76,7 +76,9 @@ const isCollision = (bomb: BombObj, bombLeft: number, helicopterTop: number): bo
 export default (state = INITIAL_STATE, action: {}): {} => {
   switch (action.type) {
     case actionTypes.INIT_GAME:
-      return { ...state, bestScore: action.payload.bestScore };
+      return {
+        ...state, gameStarted: false, gameOver: false, bestScore: action.payload.bestScore,
+      };
     case actionTypes.START_GAME:
       return { ...state, gameStarted: true };
     case actionTypes.UPDATE_HELICOPTER_TOP:

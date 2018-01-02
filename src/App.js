@@ -89,7 +89,7 @@ class App extends Component<Props, State> {
     window.addEventListener('keyup', this.moveHelicopter);
   };
 
-  startGame = (e): void => {
+  startGame = (e: EventTarget): void => {
     if (e.keyCode === 13) {
       this.props.startGame();
       this.switchHelicopterClass('fail');
